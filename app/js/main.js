@@ -1,11 +1,11 @@
 // Lab Manager — Ecosystem Dashboard. Static client-side app, no backend: reads
 // Tier 1 JSON already committed to reports/daily/ (see
 // docs/design-notes/ecosystem-dashboard-and-health-monitoring-plan.md §4).
-import { initTheme, toggleTheme, currentMode } from "./theme.js";
-import { barChart } from "./charts.js";
+import { initTheme, toggleTheme } from "./theme.js";
 
 const STATUS_ORDER = ["good", "warning", "serious", "critical"];
 const STATUS_LABEL = { good: "Good", warning: "Warning", serious: "Serious", critical: "Critical" };
+const CANONICAL_ORG = "openevo-ccs";
 
 initTheme();
 
@@ -55,26 +55,37 @@ function renderStatTiles(report) {
     .join("");
 }
 
-function renderOrgChart(report) {
-  const canvas = document.getElementById("org-chart");
-  const c = getComputedStyle(document.documentElement);
-  const seriesColors = [c.getPropertyValue("--series-a").trim(), c.getPropertyValue("--series-b").trim()];
-  const entries = Object.entries(report.repos_by_org || {}).sort((a, b) => b[1] - a[1]);
-  const data = entries.map(([org, count], i) => ({
-    label: org,
-    value: count,
-    color: seriesColors[i % seriesColors.length],
-  }));
-  barChart(canvas, data);
+// There is exactly one canonical org (github.com/openevo-ccs) — not a category to chart,
+// an invariant to check. A handful of repos were found 2026-07-22 with stale local
+// `origin` remotes still pointing at a pre-rename name; fixed via `git remote set-url`.
+// This panel is the standing guard against that drifting back unnoticed.
+function renderHygienePanel(report) {
+  const panel = document.getElementById("hygiene-panel");
+  const offenders = report.repos.filter((r) => r.wrong_org);
+  const total = report.repo_count;
+  const compliant = total - offenders.length;
+  const ok = offenders.length === 0;
+
+  panel.innerHTML = `
+    <h2>Remote hygiene</h2>
+    <p class="${ok ? "" : "muted"}">
+      <span class="status-dot ${ok ? "good" : "serious"}"></span>
+      <strong>${compliant} / ${total}</strong> repos have their <code>origin</code> remote
+      correctly pointed at <code>github.com/${CANONICAL_ORG}</code>.
+    </p>
+    ${
+      ok
+        ? ""
+        : `<p class="muted small">Needs <code>git remote set-url origin https://github.com/${CANONICAL_ORG}/&lt;repo&gt;.git</code>: ${offenders
+            .map((r) => `<code>${r.name}</code> (currently <code>${r.github_org || "?"}</code>)`)
+            .join(", ")}</p>`
+    }
+  `;
 }
 
 function renderTable(report, filters) {
   const tbody = document.getElementById("repo-tbody");
-  const filtered = report.repos.filter(
-    (r) =>
-      (filters.org === "all" || r.github_org === filters.org) &&
-      (filters.status === "all" || r.status === filters.status)
-  );
+  const filtered = report.repos.filter((r) => filters.status === "all" || r.status === filters.status);
 
   document.getElementById("filtered-count").textContent = `${filtered.length} of ${report.repos.length} repos`;
 
@@ -97,7 +108,7 @@ function renderTable(report, filters) {
         <tr>
           <td class="status-cell"><span class="status-dot ${r.status}"></span>${STATUS_LABEL[r.status] || r.status}</td>
           <td>${nameCell}</td>
-          <td><span class="org-badge">${r.github_org || "?"}</span></td>
+          <td><span class="org-badge${r.wrong_org ? " wrong" : ""}">${r.github_org || "?"}</span></td>
           <td>${r.default_branch || r.current_branch || "—"}</td>
           <td>${sync.length ? sync.join(", ") : "in sync"}</td>
           <td>${daysLabel(r.days_since_last_commit)}</td>
@@ -108,21 +119,12 @@ function renderTable(report, filters) {
 }
 
 function populateFilters(report, onChange) {
-  const orgSelect = document.getElementById("filter-org");
-  const orgs = Object.keys(report.repos_by_org || {}).sort();
-  orgSelect.innerHTML =
-    `<option value="all">All orgs</option>` + orgs.map((o) => `<option value="${o}">${o}</option>`).join("");
-
   const statusSelect = document.getElementById("filter-status");
   statusSelect.innerHTML =
     `<option value="all">All statuses</option>` +
     STATUS_ORDER.map((s) => `<option value="${s}">${STATUS_LABEL[s]}</option>`).join("");
 
-  const filters = { org: "all", status: "all" };
-  orgSelect.addEventListener("change", () => {
-    filters.org = orgSelect.value;
-    onChange(filters);
-  });
+  const filters = { status: "all" };
   statusSelect.addEventListener("change", () => {
     filters.status = statusSelect.value;
     onChange(filters);
@@ -132,7 +134,6 @@ function populateFilters(report, onChange) {
 async function main() {
   document.getElementById("theme-toggle").addEventListener("click", () => {
     toggleTheme();
-    // Re-render the chart so its colors pick up the new mode's CSS variables.
     render();
   });
 
@@ -154,12 +155,12 @@ async function main() {
 
   function render() {
     renderStatTiles(report);
-    renderOrgChart(report);
+    renderHygienePanel(report);
   }
   render();
 
   populateFilters(report, (filters) => renderTable(report, filters));
-  renderTable(report, { org: "all", status: "all" });
+  renderTable(report, { status: "all" });
 }
 
 main();

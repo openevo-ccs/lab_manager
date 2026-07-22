@@ -32,17 +32,37 @@
 `github.com/openevo-ccs/lab_manager` — the repo exists and has a public home, but no content yet.
 Worth being precise about the rest of the ecosystem before designing what it should report on:
 
-**Two GitHub orgs, not one** — a fact this doc's whole premise (a *public dashboard of "the entire
-CCS ecosystem"*) has to reckon with directly:
+**One GitHub org — `github.com/openevo-ccs` — not two.** An earlier pass of this doc (and the
+Phase 2/3 dashboard it shipped) got this wrong: it read 6 repos' local `origin` remotes still
+pointing at a pre-rename name (`github.com/openevo-ccs-lab`) and concluded there were two live
+orgs. Corrected 2026-07-22, per Dustin: there is exactly one org, "The OpenEvo CCS Lab," at
+`github.com/openevo-ccs`. Verified directly (not just asserted) before fixing anything:
+`git ls-remote` against both `openevo-ccs-lab/<repo>.git` and `openevo-ccs/<repo>.git` for all 6
+affected repos (`EvoMentor`, `EvoMentor_DE`, `ccs-graph`, `eva-graph`, `eva4k12`,
+`openevo-graph`) returned the **identical HEAD commit SHA** at both coordinates — same repo,
+same content, just an un-updated local remote URL from before the rename. No GitHub-side
+transfer was needed; fixed locally with `git remote set-url origin
+https://github.com/openevo-ccs/<repo>.git` for all 6, then verified each still fetches cleanly.
 
-| Org | Repos | Character |
-|---|---|---|
-| `github.com/openevo-ccs` | `conceptbase`, `curriculum-agents`, `curriculum-evolution`, `bio-core-k12`, `oe-interdisciplinary-k12`, `OpenCASE`, `eva_buch`, `w3id.org`, **`lab_manager`** | Active, RFC-governed, `docs/design-notes/` discipline, real CI (`validate.yml`/`ci.yml`), GitHub Pages already live on `conceptbase` |
-| `github.com/openevo-ccs-lab` | `EvoMentor`, `EvoMentor_DE`, `ccs-graph`, `eva-graph`, `eva4k12`, `openevo-graph` | Older; mixed maturity — `EvoMentor_DE` and `eva4k12` are real, populated curriculum data; `ccs-graph`'s README is boilerplate but its `edges/` schema is genuinely rich (per `ccs-insights-pipelines-plan.md` §1); `openevo-graph` looks dormant/superseded (same doc, §1.1); `EvoMentor`'s README has unfilled template sections |
+All 16 repos now correctly resolve to `github.com/openevo-ccs`:
 
-Per your answer in this session: treat `openevo-ccs` as the org to consolidate on, and
-`openevo-ccs-lab` as legacy — this doc's dashboard design (§4) and rename recommendation (§3)
-both build on that.
+| Repos | Character |
+|---|---|
+| `conceptbase`, `curriculum-agents`, `curriculum-evolution`, `bio-core-k12`, `oe-interdisciplinary-k12`, `OpenCASE`, `eva_buch`, `w3id.org`, `lab_manager` | Active, RFC-governed, `docs/design-notes/` discipline, real CI (`validate.yml`/`ci.yml`), GitHub Pages already live on `conceptbase` and now `lab_manager` |
+| `EvoMentor`, `EvoMentor_DE`, `ccs-graph`, `eva-graph`, `eva4k12`, `openevo-graph`, `KoMet` | Mixed maturity, same org — `EvoMentor_DE` and `eva4k12` are real, populated curriculum data; `ccs-graph`'s README is boilerplate but its `edges/` schema is genuinely rich (per `ccs-insights-pipelines-plan.md` §1); `openevo-graph` looks dormant/superseded (same doc, §1.1); `EvoMentor`'s README has unfilled template sections; `KoMet` appeared mid-session, picked up automatically by `git_health.py`'s discovery-based scan with zero config changes |
+
+`scripts/git_health.py` now treats this as a standing invariant, not a two-category split: any
+repo whose remote doesn't resolve to `openevo-ccs` is flagged (`wrong_org`, at least `serious`
+status) rather than silently bucketed as a second normal org. The dashboard's former "Repos by
+GitHub org" chart — comparing two things that were never actually two things — is replaced with
+a "Remote hygiene" panel (§4) that states the invariant directly and would surface it immediately
+if this kind of drift ever recurred.
+
+**Still open, and materially smaller than this doc originally assumed**: in-repo references to
+the old `openevo-ccs-lab` name — READMEs' clone instructions, `eva4k12`'s JSON metadata
+(`"publisher": "openevo-ccs-lab"`, `"affiliation": "openevo-ccs-lab"`, etc.), `EvoMentor`'s docs —
+are stale *content*, not stale *infrastructure*. Fixing those means editing and pushing to those
+6 repos individually; not done as part of this pass (see Open Decision 7, §11).
 
 **Licensing is already a real, working discipline**, not something this doc needs to invent:
 `conceptbase` runs dual CC-BY-NC-SA-4.0 (content) / MIT (code), `GOVERNANCE.md` defines a
@@ -124,10 +144,10 @@ user-level JSON config, two personal utility scripts), which is exactly why it's
 without touching anything that could affect a collaborator, CI, or the public repos themselves.
 
 **Recommended target, given Open Decision-2's org-consolidation lean:** `D:\dev\openevo-ccs` —
-matches the org `lab_manager` (and most active repos) actually live under, rather than the legacy
-org name. A rename to something else (just shortening, e.g. `D:\dev\ccs`) is a valid alternative
-if org-name alignment isn't the goal — this doc defaults to org-alignment since it's already the
-direction you confirmed.
+matches the org every repo in this ecosystem actually lives under (§1), rather than the stale
+pre-rename name. A rename to something else (just shortening, e.g. `D:\dev\ccs`) is a valid
+alternative if org-name alignment isn't the goal — this doc defaults to org-alignment since it's
+already the direction you confirmed.
 
 **Sequencing, if approved:** update the 2 scripts, recreate both symlinks pointing at the new
 path, rename the folder, then let `~/.claude.json` re-register the six project paths naturally on
@@ -206,11 +226,11 @@ detail if any ever appears in local reports.
 ## 5. Ecosystem git health
 
 Extends `check_repos.py` rather than replacing its logic wholesale — same checks, restructured
-for machine-readable output and both-org coverage:
+for machine-readable output plus the org-invariant check (§1):
 
 - **Per-repo checks**: `.git` presence, current branch (don't assume `main` — read the actual
-  default branch), clean/dirty working tree, ahead/behind vs. remote, remote URL (and which org
-  it resolves to, feeding §1's inventory), presence of `README.md`/`LICENSE`/`.gitignore`/
+  default branch), clean/dirty working tree, ahead/behind vs. remote, remote URL (flagged if it
+  doesn't resolve to the one canonical `openevo-ccs` org — §1), presence of `README.md`/`LICENSE`/`.gitignore`/
   `CONTRIBUTING.md`/CI workflow file, days since last commit, open issues/PRs (GitHub API, needs
   a token — same "bring your own token, don't share one" discipline as GWDG keys, see §6/§8).
 - **Ecosystem-level checks**, new relative to `check_repos.py`: broken cross-repo references (a
@@ -372,8 +392,18 @@ conventions"). Recorded here for the decision trail, not still open.
    `EvoMentor`-established names — `GWDG_LLM_URL`, `GWDG_LLM_KEY`, `GWDG_LLM_MODEL` — with
    `SAIA_API_KEY` carried forward unreconciled for now. `D:\ccs_lab\.env` itself was left
    untouched (out of scope — separate legacy project, not this ecosystem).
-6. **Org-level consolidation follow-up doc: confirmed as default** — yes, separately, once the
-   local rename (§3) is executed and proves uneventful. Not started yet.
+6. **Org-level consolidation follow-up doc: moot, not deferred.** This assumed a real GitHub
+   org-migration decision (transfer 6 repos between orgs). Investigation on 2026-07-22 (see §1's
+   correction) found there was never a second org to migrate away from — all 6 repos already
+   live under `openevo-ccs`; only their *local* remotes were stale. Fixed directly (§1, §3), no
+   follow-up doc needed for this.
+7. **In-repo stale `openevo-ccs-lab` references** (§1's correction) — READMEs' clone
+   instructions, `eva4k12`'s JSON metadata fields, `EvoMentor`'s docs, `check_repos.py` and
+   `eva4k12/scripts/schema_generator.py`'s hardcoded paths (unrelated to the org name, but the
+   same "stale reference" family) — across 6 separate repos. **Not resolved this session** —
+   fixing it means committing and pushing to each of those repos individually, a bigger action
+   than the local-only remote-URL fix. Ask Dustin before doing this: fix all of them now in one
+   pass, or treat it as routine cleanup the next time each repo is touched anyway?
 
 ### Rename status
 
@@ -407,3 +437,4 @@ exact command sequence and timing options.
 | 2026-07-22 | Initial draft, written for review — not yet implemented, not yet RFC'd. |
 | 2026-07-22 | Open Decisions 1/3/4/5/6 resolved; Phase 1 scaffolding executed (`local/`, `reports/`, `.gitignore`, `LICENSE`/`LICENSE-CODE`); legacy GWDG key tested live and migrated to `local/.env`. Rename (§3) still pending — see §11. |
 | 2026-07-22 | Phase 2: `scripts/git_health.py` built, tested against the live 16-repo ecosystem, one real bug found and fixed (org-attribution regex broke on dotted repo names like `w3id.org`). Phase 3: dashboard (`app/`) built, GitHub Pages workflow added, verified rendering correctly in both light and dark mode via a local Playwright check (§4's Tier 1 generation model corrected based on what Phase 2 actually required — see the note inserted above). |
+| 2026-07-22 | **Correction**: the "two GitHub orgs" premise (§1) was wrong. Verified via `git ls-remote` that all 6 "legacy-org" repos already live under `openevo-ccs` (identical HEAD SHA at both URLs) — only their local `origin` remotes were stale. Fixed with `git remote set-url` for all 6, added a standing `wrong_org` invariant check to `git_health.py`, replaced the dashboard's "Repos by GitHub org" chart with a "Remote hygiene" panel, dropped the now-pointless org filter, removed the unused `charts.js` module. Open Decision 6 closed as moot; new Open Decision 7 (in-repo stale-reference cleanup across 6 repos) recorded, not resolved. |

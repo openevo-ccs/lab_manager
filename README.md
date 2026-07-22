@@ -12,8 +12,9 @@ itself. Not yet built: weekly reports/retention rollups (Phase 4) and GWDG-assis
 ## Structure
 
 - `docs/design-notes/` — planning docs (this repo's own design discipline, matching `conceptbase`)
-- `scripts/git_health.py` — scans every sibling repo under the lab root (both GitHub orgs),
-  writes `reports/daily/<date>.json` + an `index.json` manifest. Run it with `python
+- `scripts/git_health.py` — scans every sibling repo under the lab root, writes
+  `reports/daily/<date>.json` + an `index.json` manifest, and flags any repo whose remote
+  doesn't resolve to the one canonical org (`github.com/openevo-ccs`). Run it with `python
   scripts/git_health.py`; stdlib only, no dependencies.
 - `app/` — the static dashboard (`index.html` + `css/` + `js/`), reading `reports/daily/`.
   Deployed via `.github/workflows/pages.yml`, same pattern as `conceptbase/app`.
@@ -24,4 +25,4 @@ itself. Not yet built: weekly reports/retention rollups (Phase 4) and GWDG-assis
 ## License
 
 - `docs/`, `reports/`: CC-BY-NC-SA-4.0 ([`LICENSE`](LICENSE))
-- `scripts/`, `app/` (dashboard/health-check code, once built): MIT ([`LICENSE-CODE`](LICENSE-CODE))
+- `scripts/`, `app/` (dashboard/health-check code): MIT ([`LICENSE-CODE`](LICENSE-CODE))

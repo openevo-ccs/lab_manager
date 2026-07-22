@@ -1,14 +1,13 @@
 {
-  "generated_at": "2026-07-22T16:10:17.864943+00:00",
+  "generated_at": "2026-07-22T16:46:38.469555+00:00",
   "lab_root": "D:\\dev\\openevo-ccs-lab",
   "repo_count": 16,
   "repos_by_org": {
-    "openevo-ccs": 10,
-    "openevo-ccs-lab": 6
+    "openevo-ccs": 16
   },
   "repos_by_status": {
-    "good": 4,
-    "warning": 12,
+    "good": 3,
+    "warning": 13,
     "serious": 0,
     "critical": 0
   },
@@ -34,16 +33,13 @@
         "CONTRIBUTING.md": false
       },
       "has_ci_workflow": true,
-      "github_api": {
-        "open_issues_and_prs": 0,
-        "default_branch_reported": "main",
-        "archived": false
-      },
+      "github_api": null,
       "missing_required_files": [],
       "missing_recommended_files": [
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "good"
     },
     {
@@ -52,8 +48,8 @@
       "current_branch": "main",
       "clean": true,
       "uncommitted_change_count": 0,
-      "remote": "https://github.com/openevo-ccs-lab/ccs-graph.git",
-      "github_org": "openevo-ccs-lab",
+      "remote": "https://github.com/openevo-ccs/ccs-graph.git",
+      "github_org": "openevo-ccs",
       "github_repo": "ccs-graph",
       "default_branch": "main",
       "ahead": 0,
@@ -73,14 +69,15 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
       "name": "conceptbase",
       "is_git_repo": true,
-      "current_branch": "main",
-      "clean": true,
-      "uncommitted_change_count": 0,
+      "current_branch": "rfc-0011-teacher-competency-frameworks",
+      "clean": false,
+      "uncommitted_change_count": 12,
       "remote": "https://github.com/openevo-ccs/conceptbase.git",
       "github_org": "openevo-ccs",
       "github_repo": "conceptbase",
@@ -96,14 +93,11 @@
         "CONTRIBUTING.md": true
       },
       "has_ci_workflow": true,
-      "github_api": {
-        "open_issues_and_prs": 0,
-        "default_branch_reported": "main",
-        "archived": false
-      },
+      "github_api": null,
       "missing_required_files": [],
       "missing_recommended_files": [],
-      "status": "good"
+      "wrong_org": false,
+      "status": "warning"
     },
     {
       "name": "curriculum-agents",
@@ -129,6 +123,7 @@
       "github_api": null,
       "missing_required_files": [],
       "missing_recommended_files": [],
+      "wrong_org": false,
       "status": "good"
     },
     {
@@ -157,6 +152,7 @@
       "missing_recommended_files": [
         ".gitignore"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -165,8 +161,8 @@
       "current_branch": "main",
       "clean": true,
       "uncommitted_change_count": 0,
-      "remote": "https://github.com/openevo-ccs-lab/eva-graph.git",
-      "github_org": "openevo-ccs-lab",
+      "remote": "https://github.com/openevo-ccs/eva-graph.git",
+      "github_org": "openevo-ccs",
       "github_repo": "eva-graph",
       "default_branch": "main",
       "ahead": 0,
@@ -186,6 +182,7 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -194,8 +191,8 @@
       "current_branch": "main",
       "clean": true,
       "uncommitted_change_count": 0,
-      "remote": "https://github.com/openevo-ccs-lab/eva4k12.git",
-      "github_org": "openevo-ccs-lab",
+      "remote": "https://github.com/openevo-ccs/eva4k12.git",
+      "github_org": "openevo-ccs",
       "github_repo": "eva4k12",
       "default_branch": "main",
       "ahead": 0,
@@ -215,6 +212,7 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -238,15 +236,12 @@
         "CONTRIBUTING.md": false
       },
       "has_ci_workflow": false,
-      "github_api": {
-        "open_issues_and_prs": 0,
-        "default_branch_reported": "main",
-        "archived": false
-      },
+      "github_api": null,
       "missing_required_files": [],
       "missing_recommended_files": [
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -255,8 +250,8 @@
       "current_branch": "main",
       "clean": true,
       "uncommitted_change_count": 0,
-      "remote": "https://github.com/openevo-ccs-lab/EvoMentor.git",
-      "github_org": "openevo-ccs-lab",
+      "remote": "https://github.com/openevo-ccs/EvoMentor.git",
+      "github_org": "openevo-ccs",
       "github_repo": "EvoMentor",
       "default_branch": "main",
       "ahead": 0,
@@ -276,6 +271,7 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -284,8 +280,8 @@
       "current_branch": "main",
       "clean": true,
       "uncommitted_change_count": 0,
-      "remote": "https://github.com/openevo-ccs-lab/EvoMentor_DE.git",
-      "github_org": "openevo-ccs-lab",
+      "remote": "https://github.com/openevo-ccs/EvoMentor_DE.git",
+      "github_org": "openevo-ccs",
       "github_repo": "EvoMentor_DE",
       "default_branch": "main",
       "ahead": 0,
@@ -305,6 +301,7 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -312,7 +309,7 @@
       "is_git_repo": true,
       "current_branch": "main",
       "clean": false,
-      "uncommitted_change_count": 1,
+      "uncommitted_change_count": 3,
       "remote": "https://github.com/openevo-ccs/KoMet.git",
       "github_org": "openevo-ccs",
       "github_repo": "KoMet",
@@ -336,6 +333,7 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -343,14 +341,14 @@
       "is_git_repo": true,
       "current_branch": "main",
       "clean": false,
-      "uncommitted_change_count": 7,
+      "uncommitted_change_count": 1,
       "remote": "https://github.com/openevo-ccs/lab_manager.git",
       "github_org": "openevo-ccs",
       "github_repo": "lab_manager",
       "default_branch": "main",
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-22T16:39:28+02:00",
+      "last_commit_at": "2026-07-22T18:24:07+02:00",
       "days_since_last_commit": 0,
       "files": {
         "README.md": true,
@@ -358,12 +356,13 @@
         ".gitignore": true,
         "CONTRIBUTING.md": false
       },
-      "has_ci_workflow": false,
+      "has_ci_workflow": true,
       "github_api": null,
       "missing_required_files": [],
       "missing_recommended_files": [
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -393,6 +392,7 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -421,6 +421,7 @@
       "missing_recommended_files": [
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "good"
     },
     {
@@ -429,8 +430,8 @@
       "current_branch": "main",
       "clean": true,
       "uncommitted_change_count": 0,
-      "remote": "https://github.com/openevo-ccs-lab/openevo-graph.git",
-      "github_org": "openevo-ccs-lab",
+      "remote": "https://github.com/openevo-ccs/openevo-graph.git",
+      "github_org": "openevo-ccs",
       "github_repo": "openevo-graph",
       "default_branch": "main",
       "ahead": 0,
@@ -450,6 +451,7 @@
         ".gitignore",
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     },
     {
@@ -480,6 +482,7 @@
       "missing_recommended_files": [
         "CONTRIBUTING.md"
       ],
+      "wrong_org": false,
       "status": "warning"
     }
   ]

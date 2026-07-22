@@ -127,9 +127,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   padding: 18px 20px;
   margin-bottom: 24px;
 }
-.chart-wrap { max-width: 480px; }
-.chart-wrap canvas { max-height: 220px; }
-
 /* Filters — one row above the table (interaction.md) */
 .filter-row {
   display: flex;
@@ -181,6 +178,13 @@ table.repo-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   color: var(--text-secondary);
   white-space: nowrap;
 }
+.org-badge.wrong {
+  color: var(--serious);
+  border-color: var(--serious);
+}
+
+#hygiene-panel p { margin: 4px 0; }
+#hygiene-panel .status-dot { margin-right: 8px; }
 
 .flags-cell .flag {
   display: inline-block;

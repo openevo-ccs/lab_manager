@@ -3,10 +3,15 @@
 
 Phase 2 of docs/design-notes/ecosystem-dashboard-and-health-monitoring-plan.md §5.
 Extends the repo root's check_repos.py: same checks (branch, clean/dirty, ahead/behind,
-remote, expected files), plus JSON output, GitHub-org attribution (this ecosystem spans
-both github.com/openevo-ccs and github.com/openevo-ccs-lab), actual default-branch
-detection instead of an assumed "main", and optional open issue/PR counts via the
-GitHub API.
+remote, expected files), plus JSON output, actual default-branch detection instead of an
+assumed "main", and optional open issue/PR counts via the GitHub API.
+
+There is exactly one canonical org: github.com/openevo-ccs. A handful of repos were
+found (2026-07-22) with stale local `origin` remotes still pointing at a pre-rename name
+(github.com/openevo-ccs-lab) — same repos, same content, just an un-updated URL; fixed
+locally via `git remote set-url`. CANONICAL_ORG below is a standing invariant check, not
+a "second org" concept: any repo whose remote doesn't resolve to it is flagged, so this
+doesn't quietly recur unnoticed.
 
 Tier 1 per the design doc: no GWDG calls, safe to run in CI or locally, output is public
 by construction (repo/git metadata, nothing sensitive) and defaults to landing directly
@@ -35,6 +40,7 @@ REQUIRED_FILES = ["README.md", "LICENSE"]
 RECOMMENDED_FILES = [".gitignore", "CONTRIBUTING.md"]
 EXPECTED_FILES = REQUIRED_FILES + RECOMMENDED_FILES
 EXPECTED_CI_DIR = ".github/workflows"
+CANONICAL_ORG = "openevo-ccs"
 
 # Computed relative to this file's own location (scripts/ -> lab_manager -> lab root),
 # not hardcoded — the whole point of Phase 2 is to survive the pending D:\dev rename
@@ -173,6 +179,7 @@ def check_repo(path: Path, github_token: str | None, use_github_api: bool) -> di
 
     result["missing_required_files"] = [f for f in REQUIRED_FILES if not result["files"].get(f)]
     result["missing_recommended_files"] = [f for f in RECOMMENDED_FILES if not result["files"].get(f)]
+    result["wrong_org"] = bool(org) and org != CANONICAL_ORG
     result["status"] = compute_status(result)
 
     return result
@@ -183,12 +190,14 @@ def compute_status(r: dict) -> str:
     dashboard's stat tiles and status dots. Missing CONTRIBUTING.md/.gitignore alone
     doesn't demote a repo (nearly every repo in this ecosystem lacks one today, so
     treating it as more than informational would swamp the signal) — required-file
-    gaps, sync state, and CI presence are what actually move the needle."""
+    gaps, sync state, CI presence, and remote org are what actually move the needle."""
     ahead, behind = r.get("ahead") or 0, r.get("behind") or 0
     if ahead and behind:
         return "critical"  # diverged from its own remote
     if behind:
         return "serious"  # remote has commits this clone hasn't pulled
+    if r.get("wrong_org"):
+        return "serious"  # remote doesn't point at the one canonical org — fix it
     if (
         not r.get("clean", True)
         or ahead
@@ -284,6 +293,8 @@ def main() -> int:
             flags.append(f"missing required: {', '.join(r['missing_required_files'])}")
         if r.get("missing_recommended_files"):
             flags.append(f"missing recommended: {', '.join(r['missing_recommended_files'])}")
+        if r.get("wrong_org"):
+            flags.append(f"remote not under {CANONICAL_ORG} — fix with git remote set-url")
         detail = "; ".join(flags) if flags else "ok"
         print(f"  [{r.get('status', '?'):<8}] {r['name']:<28} [{r.get('github_org') or '?'}] {detail}")
 
