@@ -1,0 +1,26 @@
+# Local-only workspace (see docs/design-notes/ecosystem-dashboard-and-health-monitoring-plan.md §2)
+# Everything under local/ is private to this machine and must never be committed:
+# full-detail daily/weekly reports, GWDG usage logs, vector-index/run-manifest caches, notes.
+local/
+
+# Python (git-health scripts, report generators)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Env files (defense in depth — real secrets belong in local/.env, which is already
+# excluded above, but a stray .env at repo root must never be committed either)
+.env
+.env.*

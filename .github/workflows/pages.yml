@@ -1,0 +1,36 @@
+name: Deploy Ecosystem Dashboard to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ["app/**", "reports/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/configure-pages@v6
+      - name: Assemble site (app/ + committed reports/)
+        run: |
+          mkdir -p _site/reports
+          cp -r app/. _site/
+          cp -r reports/. _site/reports/
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5
