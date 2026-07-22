@@ -104,12 +104,19 @@ function renderTable(report, filters) {
         ...(r.missing_recommended_files || []).map((f) => `no ${f}`),
         ...(r.has_ci_workflow ? [] : ["no CI"]),
       ];
+      // Show the branch actually checked out, not the repo's default — ahead/behind
+      // above is computed against *this* branch's own upstream (git_health.py), so
+      // showing "main" here while the numbers are for a feature branch would be
+      // actively misleading, not just imprecise.
+      const branchCell = r.on_default_branch
+        ? r.current_branch || "—"
+        : `${r.current_branch || "—"} <span class="muted small">(not ${r.default_branch || "default"})</span>`;
       return `
         <tr>
           <td class="status-cell"><span class="status-dot ${r.status}"></span>${STATUS_LABEL[r.status] || r.status}</td>
           <td>${nameCell}</td>
           <td><span class="org-badge${r.wrong_org ? " wrong" : ""}">${r.github_org || "?"}</span></td>
-          <td>${r.default_branch || r.current_branch || "—"}</td>
+          <td>${branchCell}</td>
           <td>${sync.length ? sync.join(", ") : "in sync"}</td>
           <td>${daysLabel(r.days_since_last_commit)}</td>
           <td class="flags-cell">${flags.map((f) => `<span class="flag">${f}</span>`).join("") || "—"}</td>

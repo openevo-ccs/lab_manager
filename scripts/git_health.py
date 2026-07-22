@@ -146,21 +146,25 @@ def check_repo(path: Path, github_token: str | None, use_github_api: bool) -> di
     run(["git", "fetch", "--quiet"], path)
     default_branch = get_default_branch(path)
     result["default_branch"] = default_branch
+    result["on_default_branch"] = bool(default_branch) and branch == default_branch
 
-    if default_branch:
-        counts, rc = run(
-            ["git", "rev-list", "--left-right", "--count", f"origin/{default_branch}...HEAD"],
-            path,
-        )
-        if rc == 0 and counts:
-            behind, ahead = counts.split()
-            result["ahead"] = int(ahead)
-            result["behind"] = int(behind)
-        else:
-            result["ahead"] = result["behind"] = None
+    # Compare against the checked-out branch's OWN upstream, not always origin/<default>.
+    # A repo with a feature branch checked out (e.g. a sandbox/* branch) is meaningfully
+    # "N ahead of main" in a totally different sense than "N commits not yet pushed to
+    # its own remote" — the latter is what actually matters for "is my work saved
+    # upstream," the former conflates normal feature-branch work with unpushed-ness.
+    # Found live: oe-interdisciplinary-k12 checked out on sandbox/mpi-eva-capstone
+    # showed "1 ahead of main" when the real, actionable fact was "0 ahead of its own
+    # tracking branch" — already fully pushed, just not to main, which is correct and
+    # expected for a feature branch.
+    counts, rc = run(["git", "rev-list", "--left-right", "--count", "@{upstream}...HEAD"], path)
+    if rc == 0 and counts:
+        behind, ahead = counts.split()
+        result["ahead"] = int(ahead)
+        result["behind"] = int(behind)
     else:
         result["ahead"] = result["behind"] = None
-        result["note"] = "no origin/HEAD symbolic-ref — default branch unknown, ahead/behind not computed"
+        result["note"] = "current branch has no upstream configured — ahead/behind not computed"
 
     last_commit_iso, _ = run(["git", "log", "-1", "--format=%cI"], path)
     result["last_commit_at"] = last_commit_iso or None
@@ -284,9 +288,11 @@ def main() -> int:
         if not r.get("clean", True):
             flags.append(f"{r['uncommitted_change_count']} uncommitted change(s)")
         if r.get("ahead"):
-            flags.append(f"{r['ahead']} ahead")
+            flags.append(f"{r['ahead']} ahead of its own upstream")
         if r.get("behind"):
-            flags.append(f"{r['behind']} behind")
+            flags.append(f"{r['behind']} behind its own upstream")
+        if r.get("current_branch") and not r.get("on_default_branch"):
+            flags.append(f"on {r['current_branch']} (not {r.get('default_branch') or 'default'})")
         if not r.get("has_ci_workflow"):
             flags.append("no CI workflow")
         if r.get("missing_required_files"):

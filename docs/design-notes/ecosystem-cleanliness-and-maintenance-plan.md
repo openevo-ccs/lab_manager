@@ -4,7 +4,7 @@
 |---|---|
 | **Project** | Define what "perfectly clean" actually means for the OpenEvo CCS Lab's 16 repos, execute today's safe cleanup pass, and design a daily-recurring system that keeps it that way — without the automation itself becoming a new risk. |
 | **Relationship to existing work** | Extends [`ecosystem-dashboard-and-health-monitoring-plan.md`](ecosystem-dashboard-and-health-monitoring-plan.md) §5 (git health) and §11 Open Decision 7 (stale-reference cleanup, opened last session). Same "never auto-merge," provenance-stamped, human-reviewed discipline as `ccs-insights-pipelines-plan.md` — applied here to *repo hygiene* instead of *content generation*. |
-| **Document status** | Draft — today's cleanup (§2) is done and pushed. The daily-maintenance system (§4–§6) is proposed, **not yet built**; Open Decisions (§8) are checkpoints for Dustin before any of it runs unattended. |
+| **Document status** | §1's cleanup, §7 Phase 1 (scheduled scan), and §6 items 3–4 (CONTRIBUTING.md + `.gitignore` rollout) are done and pushed. Open Decisions 1/3/4 resolved; 2 and the new 5 still open. `remediate` (Phase 2+, auto-PR) is **not yet built** — still needs the allowlist track record Open Decision 2 asks about. |
 | **Author** | Claude (planning pass), for review by Dustin Eirdosh |
 | **Date** | 2026-07-22 |
 
@@ -105,6 +105,20 @@ references, because those were already excluded by construction when the rule wa
 Growing the allowlist is itself a reviewed decision, mirroring this doc's own Open Decision
 discipline — not something the daily job can expand on its own.
 
+**A safety rule found the hard way, worth recording rather than just fixing quietly**: while
+rolling out §6 items 3–4, committing landed on `oe-interdisciplinary-k12`'s
+`sandbox/mpi-eva-capstone` branch and `conceptbase`'s `rfc-0011-teacher-competency-frameworks`
+branch — both real, in-progress feature branches Dustin had checked out — instead of `main`,
+simply because that's what was checked out at the time. Caught before pushing in one case, after
+committing (but before pushing) in the other; both cleanly backed out and reapplied to `main`
+without disturbing either branch. **Codified as a hard rule for any future remediation, Tier 1
+included: always check the current branch before writing anything; if it isn't the repo's
+default branch, switch to the default branch first, apply the fix there, then restore the
+original branch exactly as found (including any of the repo owner's own uncommitted state, which
+must be stashed and popped back, never discarded).** A daily job touching 16 repos will
+eventually catch one mid-feature-branch — this rule is what keeps that safe by construction
+rather than by luck.
+
 ## 4. Daily job architecture
 
 Two separable commands, not one monolithic "clean everything" script — matching the Tier 0/Tier 1
@@ -175,26 +189,80 @@ Flagged in §2, listed here as the concrete next actions rather than left implic
 2. **`EvoMentor`'s `evo_strategies` data fetch**: broken independent of the org-name question
    (§2) — needs Dustin's own look at why `raw.githubusercontent.com` 404s for that repo/path
    today (private-repo access, wrong branch, wrong path — not diagnosed further this session).
-3. **`CONTRIBUTING.md` rollout**: 11 of 16 repos are missing one (per today's `git_health.py`
-   run). Mechanical to add, but the *content* needs a real per-repo judgment call (an LPM repo's
-   contribution path runs through `conceptbase`'s RFC process; a tools repo's doesn't) — worth a
-   quick template decision with Dustin before generating 11 files, not assumed (§8 Open
-   Decision 3).
-4. **`.gitignore` gaps**: `eva4k12` has none at all; several other repos are missing one.
-   Lower-stakes than CONTRIBUTING.md (a `.gitignore` doesn't need repo-specific content judgment
-   the same way) — reasonable Tier-1-allowlist candidate once §5's infrastructure exists, using
-   `curriculum-agents`' existing `.gitignore` as the template.
+3. **`CONTRIBUTING.md` rollout — done, 2026-07-22, later the same session.** Confirmed the
+   suspicion above was right: rolling out shared *prose* would have been wrong. Built
+   [`templates/CONTRIBUTING.skeleton.md`](../../templates/CONTRIBUTING.skeleton.md) (a shape —
+   section headers plus guidance for what goes in each — not boilerplate) and wrote genuinely
+   repo-specific content for 8 repos: `bio-core-k12`, `oe-interdisciplinary-k12` (both route
+   through `conceptbase`'s RFC process for vocabulary, PR+one-review for content),
+   `OpenCASE` (real OSS platform, points at its existing `docs/DEVELOPMENT.md`), `ccs-graph`
+   (references its real backlog file and schema), `eva-graph` and `EvoMentor` (honestly modest —
+   both repos' own READMEs are still at an early/template stage, so the CONTRIBUTING.md says so
+   rather than inventing process that doesn't exist), `EvoMentor_DE` (written in German, matching
+   its actual audience — the one deliberate departure from the ecosystem's usual English house
+   style), and `lab_manager` itself. **Deliberately skipped, each for a specific reason found
+   while checking rather than assumed:**
+   - `eva4k12` — Dustin: likely to be deleted soon, not worth investing in.
+   - `openevo-graph` — already flagged in the sibling doc as possibly dormant/superseded,
+     pending its own retire-or-reactivate decision (that doc's Open Decision 5).
+   - `eva_buch` — a narrow companion repo to a Springer publication, not an open-contribution
+     target in the usual sense.
+   - `KoMet` — turned out to be a private grant-proposal strategy space for a small named team,
+     not a public-contribution project at all; a generic template would have misrepresented it.
+   - `w3id.org` — its README is literally the *upstream* `perma-id/w3id.org` project's own;
+     writing our own contribution process for a fork of someone else's infrastructure would have
+     been wrong, not just redundant.
+
+   A genuinely useful side-finding while writing `eva4k12`'s (before it was skipped): its own
+   `eva4K12_schema_ref.json` references a `GOVERNANCE.md` and `.github/ISSUE_TEMPLATE/` that
+   **don't actually exist in the repo** — the metadata describes a planned process that was never
+   built. Left as-is per the skip decision above, but worth knowing if that repo isn't actually
+   deleted.
+4. **`.gitignore` gaps — done, 2026-07-22.** Audited each repo's actual file types before writing
+   anything (Python vs. static HTML vs. pure docs vs. Node monorepo) rather than applying one
+   template — see the per-repo reasoning in each repo's own `.gitignore` comment header. New:
+   `curriculum-evolution`, `bio-core-k12`, `oe-interdisciplinary-k12`, `ccs-graph`, `eva-graph`,
+   `EvoMentor`, `EvoMentor_DE`, `KoMet`. Strengthened (already had one, but too minimal):
+   `conceptbase` (was just `__pycache__/`/`*.pyc` — added editor/OS/env-file coverage),
+   `OpenCASE` (missing `node_modules/` despite two real `package.json`-based apps — genuine gap,
+   not just tidiness). Left alone: `eva_buch` (already excellent — has explanatory comments about
+   a real bug its own author already caught and fixed; nothing to improve), `w3id.org`'s
+   (upstream project's own), `curriculum-agents`' (already good). Skipped: `eva4k12`,
+   `openevo-graph` (same reasons as item 3).
 5. **The `D:\dev\openevo-ccs-lab` → `D:\dev\openevo-ccs` rename** itself — still pending from the
    sibling doc §3/§11, blocking `check_repos.py`, `eva4k12/scripts/schema_generator.py`, and
-   `KoMet`'s monitoring docs' path references from being fixed. Unchanged status; noted here only
-   because it's the reason those three are excluded from today's cleanup.
+   `KoMet`'s monitoring docs' path references from being fixed. **Grew by one item today**: the
+   Windows Scheduled Task set up in §4 (`\OpenEvoCCSLab\LabManager-DailyGitHealthScan`) also
+   hardcodes the current path in its action — add it to the rename's checklist alongside the two
+   scripts and the two Claude Code symlinks.
+6. **`git_health.py` ahead/behind bug — found and fixed, 2026-07-22.** Discovered while doing
+   item 3's rollout: ahead/behind was computed against `origin/<default_branch>` regardless of
+   what was actually checked out, so a repo on a feature branch got compared to `main` — showing
+   confusing "N ahead" numbers that didn't mean "unpushed work," just "this branch differs from
+   main," which is normal and expected for a feature branch. Fixed to compare against the
+   checked-out branch's own `@{upstream}` instead; the dashboard and CLI output both now show the
+   actual current branch, with a plain "on `<branch>` (not `<default>`)" note instead of a
+   sync-status number that was computing the wrong comparison. `conceptbase` (on
+   `rfc-0011-teacher-competency-frameworks`), `oe-interdisciplinary-k12` (on
+   `sandbox/mpi-eva-capstone`), `eva_buch` (on `data-rerun-2026-07`), and `w3id.org` (on
+   `add-openevo-namespace`, whose default branch is `master`, not `main`) are all mid-work on
+   real feature branches right now — the fixed version reports this accurately instead of as a
+   sync problem.
 
 ## 7. Phasing
 
 - **Phase 0 — This doc's sign-off.** Resolve §8. No unattended automation yet.
-- **Phase 1 — Schedule `scan` locally (Tier 0 only).** Zero new risk — it's the same read-only
-  script already built and tested, just on a timer (Task Scheduler) instead of run by hand.
-  Immediately actionable.
+- **Phase 1 — Schedule `scan` locally (Tier 0 only) — done, 2026-07-22.** A Windows Scheduled
+  Task (`\OpenEvoCCSLab\LabManager-DailyGitHealthScan`, daily at 06:00 local, via the new
+  `scripts/daily_scan.ps1` wrapper) runs the same read-only scan already built and tested, logs
+  to `local/logs/` (gitignored, last 30 runs kept). Verified end-to-end by triggering it manually
+  before trusting the timer. **Note on mechanism, since two Claude-native options were checked
+  and rejected first**: cloud routines (`/schedule`) run in an isolated sandbox with a fresh git
+  checkout each time — no access to the local sibling clones this scan depends on, and even
+  `lab_manager` itself would always read as "clean, 0 ahead/behind" from a fresh clone, defeating
+  the point. `CronCreate` is session-only and expires after 7 days — not durable enough for
+  "every day, indefinitely." A real OS-level scheduled task is the only option satisfying both
+  "runs forever, unattended" and "has real access to `D:\dev\openevo-ccs-lab`."
 - **Phase 2 — Build `remediate --dry-run`**, starting with exactly one allowlist rule (the
   stale-org-reference pattern, since today's manual pass already proves it's well-scoped). Review
   its output against today's known-good fix by hand before trusting it on anything new.
@@ -207,18 +275,26 @@ Flagged in §2, listed here as the concrete next actions rather than left implic
 
 ## 8. Open decisions
 
-1. **Local Task Scheduler vs. staying manual for Phase 1's `scan`**: is a daily unattended
-   read-only scan actually wanted, or does Dustin prefer running it himself each morning as part
-   of a routine? Both are safe; this is a convenience preference, not a safety question.
+1. *(Resolved 2026-07-22: local Windows Scheduled Task, daily 06:00 local — §7 Phase 1. Not a
+   convenience preference after all, it turned out — the two Claude-native alternatives were
+   actually incapable of the job, not just less convenient. See §7's note.)*
 2. **Allowlist graduation criteria for §5's new checks**: how many clean runs / how much manual
    spot-checking before a Tier 0 check is trusted enough to write its matching Tier 1 remediation
    rule? No default proposed — this is Dustin's risk tolerance to set, not a technical question.
-3. **`CONTRIBUTING.md` template**: one shared template across all 16 repos, or two variants
-   (LPM/content repos pointing at `conceptbase`'s RFC process vs. tools/code repos with a
-   simpler PR flow)? Needed before §6 item 3 can proceed.
-4. **`.gitignore` rollout timing**: bundle it into Phase 2's first `remediate` allowlist rule
-   alongside the org-reference fix, or treat as a separate, later rule? Either is fine — this is
-   sequencing, not a risk question.
+   Still open — §6 items 3–4 were done by hand this session, not through a Tier 1 allowlist rule,
+   so no real accuracy track record exists yet to set this from.
+3. *(Resolved 2026-07-22: not one template, and not two — a shared **skeleton** (shape only) with
+   genuinely per-repo content. See §6 item 3 for the full accounting, including which repos were
+   deliberately excluded and why.)*
+4. *(Resolved 2026-07-22: done immediately alongside item 3, not deferred to a `remediate`
+   allowlist rule — each repo needed real inspection of its actual file types first, which isn't
+   a mechanical allowlist-style fix anyway. See §6 item 4.)*
+5. **New, from today's rollout**: should `git_health.py` eventually detect drift between a
+   repo's rolled-out `CONTRIBUTING.md` and the canonical skeleton (a version marker, e.g. an HTML
+   comment noting which skeleton version a file was generated from), so skeleton improvements
+   can be tracked as adopted-vs-stale across repos — the "improved collaboratively" half of
+   Dustin's original request, not yet built? Or is a periodic manual pass enough given how few
+   repos need this? No default proposed.
 
 ## 9. Sources
 
@@ -236,3 +312,4 @@ Flagged in §2, listed here as the concrete next actions rather than left implic
 | Date | Change |
 |---|---|
 | 2026-07-22 | Initial draft: today's cleanup executed and recorded (§2), daily-maintenance system proposed (§3–§7), not yet built beyond what §2 already shipped. |
+| 2026-07-22 | Same-session continuation, per Dustin's direction: (1) daily scan scheduled via Windows Task Scheduler, two Claude-native alternatives checked and correctly rejected first; (2) `CONTRIBUTING.md` skeleton built and rolled out to 8 repos, 5 more deliberately excluded with reasons found by checking each one, not assumed; (3) `.gitignore` audited and rolled out per-repo (8 new, 2 strengthened) based on each repo's actual file types; (4) a real `git_health.py` ahead/behind bug found and fixed (was comparing against `origin/main` regardless of checked-out branch); (5) a branch-safety incident caught and corrected — two commits briefly landed on repo owners' in-progress feature branches instead of `main`, cleanly backed out and reapplied correctly, now codified as a standing rule in §3. |

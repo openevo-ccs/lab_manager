@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-07-22T17:21:01.502046+00:00",
+  "generated_at": "2026-07-22T17:54:58.457141+00:00",
   "lab_root": "D:\\dev\\openevo-ccs-lab",
   "repo_count": 16,
   "repos_by_org": {
     "openevo-ccs": 16
   },
   "repos_by_status": {
-    "good": 3,
-    "warning": 13,
+    "good": 5,
+    "warning": 11,
     "serious": 0,
     "critical": 0
   },
@@ -22,23 +22,21 @@
       "github_org": "openevo-ccs",
       "github_repo": "bio-core-k12",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-21T09:54:38+02:00",
-      "days_since_last_commit": 1,
+      "last_commit_at": "2026-07-22T19:54:04+02:00",
+      "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
-        ".gitignore": false,
-        "CONTRIBUTING.md": false
+        ".gitignore": true,
+        "CONTRIBUTING.md": true
       },
       "has_ci_workflow": true,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        ".gitignore",
-        "CONTRIBUTING.md"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "good"
     },
@@ -52,23 +50,21 @@
       "github_org": "openevo-ccs",
       "github_repo": "ccs-graph",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-06-24T11:14:10+02:00",
-      "days_since_last_commit": 28,
+      "last_commit_at": "2026-07-22T19:54:07+02:00",
+      "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
-        ".gitignore": false,
-        "CONTRIBUTING.md": false
+        ".gitignore": true,
+        "CONTRIBUTING.md": true
       },
       "has_ci_workflow": false,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        ".gitignore",
-        "CONTRIBUTING.md"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "warning"
     },
@@ -82,7 +78,8 @@
       "github_org": "openevo-ccs",
       "github_repo": "conceptbase",
       "default_branch": "main",
-      "ahead": 1,
+      "on_default_branch": false,
+      "ahead": 0,
       "behind": 0,
       "last_commit_at": "2026-07-22T19:05:38+02:00",
       "days_since_last_commit": 0,
@@ -97,7 +94,7 @@
       "missing_required_files": [],
       "missing_recommended_files": [],
       "wrong_org": false,
-      "status": "warning"
+      "status": "good"
     },
     {
       "name": "curriculum-agents",
@@ -109,6 +106,7 @@
       "github_org": "openevo-ccs",
       "github_repo": "curriculum-agents",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
       "last_commit_at": "2026-07-22T17:52:13+02:00",
@@ -136,22 +134,21 @@
       "github_org": "openevo-ccs",
       "github_repo": "curriculum-evolution",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-22T11:44:19+02:00",
+      "last_commit_at": "2026-07-22T19:54:02+02:00",
       "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
-        ".gitignore": false,
+        ".gitignore": true,
         "CONTRIBUTING.md": true
       },
       "has_ci_workflow": false,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        ".gitignore"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "warning"
     },
@@ -165,23 +162,21 @@
       "github_org": "openevo-ccs",
       "github_repo": "eva-graph",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-22T19:15:46+02:00",
+      "last_commit_at": "2026-07-22T19:54:09+02:00",
       "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
-        ".gitignore": false,
-        "CONTRIBUTING.md": false
+        ".gitignore": true,
+        "CONTRIBUTING.md": true
       },
       "has_ci_workflow": false,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        ".gitignore",
-        "CONTRIBUTING.md"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "warning"
     },
@@ -195,6 +190,7 @@
       "github_org": "openevo-ccs",
       "github_repo": "eva4k12",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
       "last_commit_at": "2026-07-22T19:15:33+02:00",
@@ -225,7 +221,8 @@
       "github_org": "openevo-ccs",
       "github_repo": "eva_buch",
       "default_branch": "main",
-      "ahead": 3,
+      "on_default_branch": false,
+      "ahead": 0,
       "behind": 0,
       "last_commit_at": "2026-07-22T09:36:00+02:00",
       "days_since_last_commit": 0,
@@ -254,23 +251,21 @@
       "github_org": "openevo-ccs",
       "github_repo": "EvoMentor",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-22T19:16:00+02:00",
+      "last_commit_at": "2026-07-22T19:54:11+02:00",
       "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
-        ".gitignore": false,
-        "CONTRIBUTING.md": false
+        ".gitignore": true,
+        "CONTRIBUTING.md": true
       },
       "has_ci_workflow": false,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        ".gitignore",
-        "CONTRIBUTING.md"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "warning"
     },
@@ -284,23 +279,21 @@
       "github_org": "openevo-ccs",
       "github_repo": "EvoMentor_DE",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-22T19:17:10+02:00",
+      "last_commit_at": "2026-07-22T19:54:13+02:00",
       "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
-        ".gitignore": false,
-        "CONTRIBUTING.md": false
+        ".gitignore": true,
+        "CONTRIBUTING.md": true
       },
       "has_ci_workflow": false,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        ".gitignore",
-        "CONTRIBUTING.md"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "warning"
     },
@@ -308,20 +301,21 @@
       "name": "KoMet",
       "is_git_repo": true,
       "current_branch": "main",
-      "clean": false,
-      "uncommitted_change_count": 1,
+      "clean": true,
+      "uncommitted_change_count": 0,
       "remote": "https://github.com/openevo-ccs/KoMet.git",
       "github_org": "openevo-ccs",
       "github_repo": "KoMet",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-22T19:08:34+02:00",
+      "last_commit_at": "2026-07-22T19:54:16+02:00",
       "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": false,
-        ".gitignore": false,
+        ".gitignore": true,
         "CONTRIBUTING.md": false
       },
       "has_ci_workflow": false,
@@ -330,7 +324,6 @@
         "LICENSE"
       ],
       "missing_recommended_files": [
-        ".gitignore",
         "CONTRIBUTING.md"
       ],
       "wrong_org": false,
@@ -341,27 +334,26 @@
       "is_git_repo": true,
       "current_branch": "main",
       "clean": false,
-      "uncommitted_change_count": 2,
+      "uncommitted_change_count": 6,
       "remote": "https://github.com/openevo-ccs/lab_manager.git",
       "github_org": "openevo-ccs",
       "github_repo": "lab_manager",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-22T18:58:43+02:00",
+      "last_commit_at": "2026-07-22T19:21:33+02:00",
       "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
         ".gitignore": true,
-        "CONTRIBUTING.md": false
+        "CONTRIBUTING.md": true
       },
       "has_ci_workflow": true,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        "CONTRIBUTING.md"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "warning"
     },
@@ -375,8 +367,10 @@
       "github_org": "openevo-ccs",
       "github_repo": "oe-interdisciplinary-k12",
       "default_branch": "main",
-      "ahead": 1,
-      "behind": 0,
+      "on_default_branch": false,
+      "ahead": null,
+      "behind": null,
+      "note": "current branch has no upstream configured \u2014 ahead/behind not computed",
       "last_commit_at": "2026-07-21T13:33:28+02:00",
       "days_since_last_commit": 1,
       "files": {
@@ -393,7 +387,7 @@
         "CONTRIBUTING.md"
       ],
       "wrong_org": false,
-      "status": "warning"
+      "status": "good"
     },
     {
       "name": "OpenCASE",
@@ -405,22 +399,21 @@
       "github_org": "openevo-ccs",
       "github_repo": "OpenCASE",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
-      "last_commit_at": "2026-07-15T13:04:31-04:00",
-      "days_since_last_commit": 7,
+      "last_commit_at": "2026-07-22T19:54:29+02:00",
+      "days_since_last_commit": 0,
       "files": {
         "README.md": true,
         "LICENSE": true,
         ".gitignore": true,
-        "CONTRIBUTING.md": false
+        "CONTRIBUTING.md": true
       },
       "has_ci_workflow": true,
       "github_api": null,
       "missing_required_files": [],
-      "missing_recommended_files": [
-        "CONTRIBUTING.md"
-      ],
+      "missing_recommended_files": [],
       "wrong_org": false,
       "status": "good"
     },
@@ -434,6 +427,7 @@
       "github_org": "openevo-ccs",
       "github_repo": "openevo-graph",
       "default_branch": "main",
+      "on_default_branch": true,
       "ahead": 0,
       "behind": 0,
       "last_commit_at": "2026-06-08T16:40:13+02:00",
@@ -464,7 +458,8 @@
       "github_org": "openevo-ccs",
       "github_repo": "w3id.org",
       "default_branch": "master",
-      "ahead": 1,
+      "on_default_branch": false,
+      "ahead": 0,
       "behind": 0,
       "last_commit_at": "2026-07-20T18:00:54+02:00",
       "days_since_last_commit": 2,
