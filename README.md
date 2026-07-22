@@ -8,6 +8,9 @@ the OpenEvo CCS Lab. See
 [`docs/design-notes/ecosystem-dashboard-and-health-monitoring-plan.md`](docs/design-notes/ecosystem-dashboard-and-health-monitoring-plan.md)
 for the full design. Phases 1–3 done: scaffolding, the git-health scanner, and the dashboard
 itself. Not yet built: weekly reports/retention rollups (Phase 4) and GWDG-assisted QC (Phase 5).
+See also
+[`docs/design-notes/ecosystem-cleanliness-and-maintenance-plan.md`](docs/design-notes/ecosystem-cleanliness-and-maintenance-plan.md)
+for the daily-maintenance/remediation system (proposed, not yet built beyond today's manual pass).
 
 ## Structure
 
