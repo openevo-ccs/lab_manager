@@ -457,13 +457,31 @@ that's correct, not a gap to fill** — per Dustin: "somedays maybe we dont work
 
 **Voice, for consistency across sessions and possibly different Claude instances writing later
 entries**: first person plural ("we"), concrete rather than generic, no jargon a non-technical
-reader would have to look up, one paragraph (roughly 100–180 words has read well so far, not a
+reader would have to look up, one paragraph (roughly 150–230 words has read well so far, not a
 hard rule), and it should say something true about *why* the day's work connects to the larger
-CCS vision, not just list what happened. Bad: "Today we updated 8 repos with CONTRIBUTING.md
-files and fixed a git_health.py bug." Good (from the actual first entry, 2026-07-22): "...it's
-the kind of unglamorous groundwork that lets a lab this ambitious — actually building the
-infrastructure for computational curriculum studies, not just describing it — keep growing
-without losing track of itself."
+CCS vision, not just list what happened.
+
+**Audience and center of gravity, corrected 2026-07-22 after the first draft got this wrong**:
+this is written *for curriculum studies people*, not for anyone tracking the GitHub org. The
+first entry led with "the lab did two things at once... a public dashboard... sixteen
+repositories" and treated the day's actual research (a competency-framework RFC, new learning
+theory, a book collaboration, a coherence tool for teacher-education curricula) as a supporting
+clause. That's backwards. **Lead with the curriculum-design substance and what it actually means
+pedagogically or theoretically; infrastructure/hygiene work is at most one closing sentence,
+framed as being in service of the research, never as a peer-level bullet next to it.** If a day
+had no real curriculum-studies work — pure infrastructure, no theory or content — say that
+plainly rather than inflating hygiene work to fill the space; a quieter entry is more honest than
+a padded one. Bad (the actual first draft): "Today was one of those days where research and
+infrastructure moved together... we also built something new: a public dashboard so the health
+of the whole lab, sixteen repositories now, can be seen at a glance..." Good (the corrected
+version, same day, same underlying facts): "Today's work kept circling back to one problem:
+coherence — keeping a curriculum, or a whole research program, pointed in the same direction even
+as it grows in a dozen directions at once. Dustin proposed a way to connect the lab's own
+competency model to the frameworks European teacher education already uses... so a claim like
+'this curriculum builds digital competence' can be checked against... instead of every project
+quietly inventing its own vocabulary." — same day, same commits, but the dashboard work becomes
+one sentence at the end ("mostly so a research program this wide... can stay as coherent as the
+curricula it's trying to help fix") instead of the headline.
 
 **Where it lives on the dashboard**: `app/js/main.js`'s `renderJournal()`, styled distinctly on
 purpose (`app/css/styles.css`'s `.journal-panel` — a serif reading face, generous line-height, a
