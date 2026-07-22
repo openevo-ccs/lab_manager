@@ -223,6 +223,13 @@ verbose `git status`/uncommitted-diff content (could reveal unpublished draft ma
 Dustin chooses to share it), anything sourced from `local/notes/`, partner-institution-identifying
 detail if any ever appears in local reports.
 
+**Private-repo scope, decided 2026-07-22**: 5 of the 16 repos (`EvoMentor`, `ccs-graph`,
+`eva-graph`, `eva4k12`, `openevo-graph`) are private on GitHub, discovered while fixing §1's
+org-attribution bug. Decision: include them in the public Tier 1 dashboard anyway — branch
+status, commit recency, and missing-file flags don't reveal repo content, and tracking WIP
+private repos' health is useful. Not a default to revisit unless a specific repo's *existence*
+itself needs to stay undisclosed, which would be a different, narrower call than this one.
+
 ## 5. Ecosystem git health
 
 Extends `check_repos.py` rather than replacing its logic wholesale — same checks, restructured
