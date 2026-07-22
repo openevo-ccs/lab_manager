@@ -21,8 +21,9 @@
 9. [What to keep from `D:\ccs_lab`'s lab_manager concept](#9-what-to-keep-from-dccs_lab s-lab_manager-concept)
 10. [Phasing](#10-phasing)
 11. [Open decisions](#11-open-decisions)
-12. [Sources](#12-sources)
-13. [Revision history](#13-revision-history)
+12. [Lab Journal](#12-lab-journal)
+13. [Sources](#13-sources)
+14. [Revision history](#14-revision-history)
 
 ---
 
@@ -422,7 +423,64 @@ so this needs to happen at a moment chosen deliberately, not folded silently int
 batch of edits, even though the analysis in §3 stands. See the accompanying chat response for the
 exact command sequence and timing options.
 
-## 12. Sources
+## 12. Lab Journal
+
+A one-paragraph, plain-language entry per working session, written by Claude and shown at the
+top of the dashboard — deliberately different in kind from everything else on it. Everything
+else here is a number computed by a script. The journal is prose, written by a person (with
+Claude), about what the day actually felt like and why it mattered — Dustin's request, verbatim:
+"describing in concise nontechnical and very human terms what we did today or in the last days...
+and how it builds infrastructure for the broader vision of CCS."
+
+**Why this can't be automated the way the rest of the dashboard is.** `scripts/git_health.py`
+runs unattended on a schedule (§7 of the sibling cleanliness doc) because it's mechanical — no
+judgment involved. Writing a paragraph that's actually worth reading requires the thing that's
+mechanical scripts *can't* do: understanding what a day's work meant, not just what changed. That
+only happens inside a live conversation. So the journal is written *during* a working session,
+not generated *for* one — there's no cron job for this, by design, not as a missing feature.
+
+**Grounding, so "an interesting dataset over time" doesn't quietly become unverifiable vibes.**
+A new script, `scripts/journal_stats.py`, computes objective facts before any prose gets
+written: commits across *all* local branches (not just each repo's default — real work happens
+on feature/sandbox branches here, per the cleanliness doc's own finding) since the last journal
+entry, grouped by repo. The entry is written from that output, not from memory of the
+conversation alone. Every entry's JSON keeps the stats alongside the prose
+(`total_commits`, `repos_touched`) specifically so a claim in the paragraph stays checkable
+years later.
+
+**Format**: `reports/journal/<date>.json` — `{date, period_start, period_end, entry,
+total_commits, repos_touched, generated_by, grounded_in}`, plus an `index.json` manifest
+(`scripts/update_journal_index.py`, same pattern as `reports/daily/`). One entry can cover a
+multi-day gap ("in the last days") if that's how long it's been since the last one — entries are
+per work session, not mechanically per calendar day. **Some days there's no entry at all, and
+that's correct, not a gap to fill** — per Dustin: "somedays maybe we dont work."
+
+**Voice, for consistency across sessions and possibly different Claude instances writing later
+entries**: first person plural ("we"), concrete rather than generic, no jargon a non-technical
+reader would have to look up, one paragraph (roughly 100–180 words has read well so far, not a
+hard rule), and it should say something true about *why* the day's work connects to the larger
+CCS vision, not just list what happened. Bad: "Today we updated 8 repos with CONTRIBUTING.md
+files and fixed a git_health.py bug." Good (from the actual first entry, 2026-07-22): "...it's
+the kind of unglamorous groundwork that lets a lab this ambitious — actually building the
+infrastructure for computational curriculum studies, not just describing it — keep growing
+without losing track of itself."
+
+**Where it lives on the dashboard**: `app/js/main.js`'s `renderJournal()`, styled distinctly on
+purpose (`app/css/styles.css`'s `.journal-panel` — a serif reading face, generous line-height, a
+left accent border) so it visually reads as *written* the moment someone lands on the page,
+before they reach the footer's fine print explaining the authorship split. Older entries collapse
+into a `<details>` archive below the latest one.
+
+**License**: CC-BY-NC-SA-4.0, same as the rest of `reports/` (§8/§11 Open Decision 3 of the
+sibling doc) — this is content, not generated metadata, if anything more clearly so than the
+git-health JSON it sits next to.
+
+**Open, not resolved**: whether `git_health.py`'s scheduled scan should at least *flag* "N days
+since the last journal entry" as a gentle reminder (never write one itself) — a small, real
+feature, not built this session. Worth deciding once there's enough real entries to know if the
+organic "write one when a session feels worth recording" cadence actually holds up, or drifts.
+
+## 13. Sources
 
 - `check_repos.py` (repo root, `D:\dev\openevo-ccs-lab\check_repos.py`)
 - `D:\ccs_lab\lab_workflow.py` (legacy prototype, local clone only, not in either GitHub org)
@@ -437,7 +495,7 @@ exact command sequence and timing options.
 - `~/.claude/agents`, `~/.claude/skills` (symlinks), `~/.claude.json` (project registry) — local
   machine state checked for §3
 
-## 13. Revision history
+## 14. Revision history
 
 | Date | Change |
 |---|---|
@@ -445,3 +503,4 @@ exact command sequence and timing options.
 | 2026-07-22 | Open Decisions 1/3/4/5/6 resolved; Phase 1 scaffolding executed (`local/`, `reports/`, `.gitignore`, `LICENSE`/`LICENSE-CODE`); legacy GWDG key tested live and migrated to `local/.env`. Rename (§3) still pending — see §11. |
 | 2026-07-22 | Phase 2: `scripts/git_health.py` built, tested against the live 16-repo ecosystem, one real bug found and fixed (org-attribution regex broke on dotted repo names like `w3id.org`). Phase 3: dashboard (`app/`) built, GitHub Pages workflow added, verified rendering correctly in both light and dark mode via a local Playwright check (§4's Tier 1 generation model corrected based on what Phase 2 actually required — see the note inserted above). |
 | 2026-07-22 | **Correction**: the "two GitHub orgs" premise (§1) was wrong. Verified via `git ls-remote` that all 6 "legacy-org" repos already live under `openevo-ccs` (identical HEAD SHA at both URLs) — only their local `origin` remotes were stale. Fixed with `git remote set-url` for all 6, added a standing `wrong_org` invariant check to `git_health.py`, replaced the dashboard's "Repos by GitHub org" chart with a "Remote hygiene" panel, dropped the now-pointless org filter, removed the unused `charts.js` module. Open Decision 6 closed as moot; new Open Decision 7 (in-repo stale-reference cleanup across 6 repos) recorded, not resolved. |
+| 2026-07-22 | Added §12 Lab Journal: `scripts/journal_stats.py` (objective grounding), `scripts/update_journal_index.py`, `reports/journal/`, and `renderJournal()` in the dashboard. First real entry written and published the same day. |

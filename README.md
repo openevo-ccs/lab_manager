@@ -19,9 +19,14 @@ for the daily-maintenance/remediation system (proposed, not yet built beyond tod
   `reports/daily/<date>.json` + an `index.json` manifest, and flags any repo whose remote
   doesn't resolve to the one canonical org (`github.com/openevo-ccs`). Run it with `python
   scripts/git_health.py`; stdlib only, no dependencies.
-- `app/` — the static dashboard (`index.html` + `css/` + `js/`), reading `reports/daily/`.
-  Deployed via `.github/workflows/pages.yml`, same pattern as `conceptbase/app`.
-- `reports/{daily,weekly}/` — **public**, committed. What the dashboard reads.
+- `scripts/journal_stats.py` — computes objective commit stats (all branches, since the last
+  entry) to ground a Lab Journal entry before writing one. `scripts/update_journal_index.py`
+  refreshes the manifest after adding one. See the design doc §12.
+- `app/` — the static dashboard (`index.html` + `css/` + `js/`), reading `reports/daily/` and
+  `reports/journal/`. Deployed via `.github/workflows/pages.yml`, same pattern as `conceptbase/app`.
+- `reports/{daily,weekly,journal}/` — **public**, committed. What the dashboard reads.
+  `journal/` holds one-paragraph, human-written entries (by Claude, during real working
+  sessions) — not a generated metric, see the design doc §12.
 - `local/` — **private, gitignored, this machine only.** Full-detail reports, GWDG usage logs,
   caches, and real credentials (`local/.env`). See `local/README.md`.
 

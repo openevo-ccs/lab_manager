@@ -43,6 +43,19 @@ function repoUrl(r) {
   return r.remote ? r.remote.replace(/\.git$/, "") : null;
 }
 
+function escapeHtml(s) {
+  const div = document.createElement("div");
+  div.textContent = s ?? "";
+  return div.innerHTML;
+}
+
+function fmtDayDate(iso) {
+  if (!iso) return "—";
+  return new Date(`${iso}T12:00:00`).toLocaleDateString(undefined, {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+}
+
 function renderStatTiles(report) {
   const grid = document.getElementById("stat-grid");
   const byStatus = report.repos_by_status || {};
@@ -81,6 +94,95 @@ function renderHygienePanel(report) {
             .join(", ")}</p>`
     }
   `;
+}
+
+// Lab Journal — written prose, not a generated metric. See docs/design-notes/
+// ecosystem-dashboard-and-health-monitoring-plan.md §12: entries are authored
+// by Claude during real working sessions with Dustin, grounded in
+// scripts/journal_stats.py's commit data, not produced by the unattended
+// daily scan. Fetches the small journal/*.json set directly rather than
+// lazy-loading per-entry — fine at the scale a "some days we don't work"
+// journal actually accumulates at; revisit if this ever reaches hundreds of
+// entries.
+async function renderJournal() {
+  const panel = document.getElementById("journal-panel");
+  let index;
+  try {
+    index = await fetchJsonWithFallback("reports/journal/index.json", "../reports/journal/index.json");
+  } catch {
+    index = null;
+  }
+
+  if (!index || !index.available || index.available.length === 0) {
+    panel.innerHTML = `
+      <div class="journal-header"><h2>Lab Journal</h2></div>
+      <p class="journal-empty muted">No journal entries yet.</p>`;
+    return;
+  }
+
+  const entries = (
+    await Promise.all(
+      index.available.map((d) =>
+        fetchJsonWithFallback(`reports/journal/${d}.json`, `../reports/journal/${d}.json`).catch(() => null)
+      )
+    )
+  ).filter(Boolean);
+  entries.sort((a, b) => (a.date < b.date ? 1 : -1)); // newest first
+
+  if (entries.length === 0) {
+    panel.innerHTML = `
+      <div class="journal-header"><h2>Lab Journal</h2></div>
+      <p class="journal-empty muted">No journal entries yet.</p>`;
+    return;
+  }
+
+  const [latest, ...older] = entries;
+  const metaLine = (e) =>
+    `${e.total_commits ?? "?"} commits across ${e.repos_touched?.length ?? "?"} ${
+      (e.repos_touched?.length ?? 0) === 1 ? "repository" : "repositories"
+    }`;
+
+  const archiveHtml = older.length
+    ? `
+      <button class="journal-archive-toggle" id="journal-archive-toggle" type="button" aria-expanded="false">
+        Show ${older.length} earlier ${older.length === 1 ? "entry" : "entries"}
+      </button>
+      <div class="journal-archive" id="journal-archive" hidden>
+        ${older
+          .map(
+            (e) => `
+          <details class="journal-archive-item">
+            <summary><span class="journal-date">${fmtDayDate(e.date)}</span></summary>
+            <p class="journal-entry">${escapeHtml(e.entry)}</p>
+            <p class="journal-meta">${metaLine(e)}</p>
+          </details>`
+          )
+          .join("")}
+      </div>`
+    : "";
+
+  panel.innerHTML = `
+    <div class="journal-header">
+      <h2>Lab Journal</h2>
+      <span class="journal-date">${fmtDayDate(latest.date)}</span>
+    </div>
+    <p class="journal-entry">${escapeHtml(latest.entry)}</p>
+    <p class="journal-meta">${metaLine(latest)}</p>
+    ${archiveHtml}
+  `;
+
+  const toggle = document.getElementById("journal-archive-toggle");
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      const archive = document.getElementById("journal-archive");
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      archive.hidden = expanded;
+      toggle.setAttribute("aria-expanded", String(!expanded));
+      toggle.textContent = expanded
+        ? `Show ${older.length} earlier ${older.length === 1 ? "entry" : "entries"}`
+        : "Hide earlier entries";
+    });
+  }
 }
 
 function renderTable(report, filters) {
@@ -165,6 +267,7 @@ async function main() {
     renderHygienePanel(report);
   }
   render();
+  renderJournal();
 
   populateFilters(report, (filters) => renderTable(report, filters));
   renderTable(report, { status: "all" });
