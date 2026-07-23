@@ -1,66 +1,8 @@
-/* Lab Manager — Ecosystem Dashboard. Palette tokens copied verbatim from
-   conceptbase/app/css/styles.css (the dataviz skill's already-validated default:
-   fixed categorical order series-a/series-b, fixed status scale, shared
-   light/dark chart chrome) — reused, not re-derived, so this dashboard reads as
-   the same visual system as the rest of the public OpenEvo CCS Lab. Theme is
-   selected via [data-theme] (explicit toggle) or prefers-color-scheme (OS
-   default) — the toggle always wins. */
-
-:root {
-  color-scheme: light;
-  --surface-1: #fcfcfb;
-  --surface-2: #ffffff;
-  --page-plane: #f9f9f7;
-  --text-primary: #0b0b0b;
-  --text-secondary: #52514e;
-  --text-muted: #898781;
-  --gridline: #e1e0d9;
-  --baseline: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.10);
-  --border-strong: rgba(11, 11, 11, 0.18);
-  --series-a: #2a78d6;
-  --series-b: #008300;
-  --good: #0ca30c;
-  --warning: #fab219;
-  --serious: #ec835a;
-  --critical: #d03b3b;
-  --radius: 8px;
-  --radius-sm: 5px;
-  --font: system-ui, -apple-system, "Segoe UI", sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])) {
-    color-scheme: dark;
-    --surface-1: #1a1a19;
-    --surface-2: #212120;
-    --page-plane: #0d0d0d;
-    --text-primary: #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted: #898781;
-    --gridline: #2c2c2a;
-    --baseline: #383835;
-    --border: rgba(255, 255, 255, 0.10);
-    --border-strong: rgba(255, 255, 255, 0.18);
-    --series-a: #3987e5;
-    --series-b: #008300;
-  }
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --surface-1: #1a1a19;
-  --surface-2: #212120;
-  --page-plane: #0d0d0d;
-  --text-primary: #ffffff;
-  --text-secondary: #c3c2b7;
-  --text-muted: #898781;
-  --gridline: #2c2c2a;
-  --baseline: #383835;
-  --border: rgba(255, 255, 255, 0.10);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --series-a: #3987e5;
-  --series-b: #008300;
-}
+/* Lab Manager — Ecosystem Dashboard. Design tokens (palette, radii, font stack,
+   light/dark theme switching) live in openevo-graph/design-system/tokens.css, linked
+   in index.html before this file — see lab_manager/docs/design-notes/
+   ecosystem-authoring-format-style-guide-and-wordpress-ingestion-plan.md §4. This file
+   holds only this app's layout/component rules. */
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
