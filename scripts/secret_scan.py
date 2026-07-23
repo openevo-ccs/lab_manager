@@ -22,6 +22,11 @@ from pathlib import Path
 
 LAB_ROOT = Path(__file__).resolve().parents[2]
 
+# This tool's own name contains "secret" — exclude it explicitly rather than
+# tighten the patterns generally and risk missing a real hit. Found live:
+# the first real run flagged itself.
+SELF_EXCLUDE = {("lab_manager", "scripts/secret_scan.py")}
+
 PATTERNS = [
     re.compile(r"\.env($|\.)", re.IGNORECASE),
     re.compile(r"_key\b", re.IGNORECASE),
@@ -48,7 +53,11 @@ def main() -> int:
             continue
         if not (entry / ".git").exists():
             continue
-        matches = [f for f in tracked_files(entry) if any(p.search(f) for p in PATTERNS)]
+        matches = [
+            f
+            for f in tracked_files(entry)
+            if any(p.search(f) for p in PATTERNS) and (entry.name, f) not in SELF_EXCLUDE
+        ]
         if matches:
             hits[entry.name] = matches
 
