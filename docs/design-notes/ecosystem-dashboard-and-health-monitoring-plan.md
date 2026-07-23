@@ -22,8 +22,9 @@
 10. [Phasing](#10-phasing)
 11. [Open decisions](#11-open-decisions)
 12. [Lab Journal](#12-lab-journal)
-13. [Sources](#13-sources)
-14. [Revision history](#14-revision-history)
+13. [Where the agents/skills live: `curriculum-agents`, not here](#13-where-the-agentsskills-live-curriculum-agents-not-here)
+14. [Sources](#14-sources)
+15. [Revision history](#15-revision-history)
 
 ---
 
@@ -498,7 +499,38 @@ since the last journal entry" as a gentle reminder (never write one itself) — 
 feature, not built this session. Worth deciding once there's enough real entries to know if the
 organic "write one when a session feels worth recording" cadence actually holds up, or drifts.
 
-## 13. Sources
+## 13. Where the agents/skills live: `curriculum-agents`, not here
+
+**Corrected 2026-07-23**, mid-build of the first explicit `/ccslab.*` commands: the natural first
+instinct — a project-scoped `lab_manager/.claude/skills/` directory — was wrong. Dustin's
+correction: `curriculum-agents` already has a working, *globally* symlinked (`~/.claude/agents`,
+`~/.claude/skills`) agent/skill model, used by every other capability in this ecosystem. Building
+a second, parallel, project-scoped mechanism here would only be visible when working *inside*
+`lab_manager` specifically — exactly backwards for commands meant to check on the whole ecosystem
+from wherever you happen to be.
+
+**The resulting split, now real and pushed**: `curriculum-agents/agents/ccslab-manager.md` (one
+persona) plus six standalone skills — `ccslab-health`, `ccslab-clean`, `ccslab-gwdg`,
+`ccslab-vision`, `ccslab-journal`, `ccslab-morning` — hold the *how* (instructions, voice rules,
+the hard-won branch-safety rule from the cleanliness doc §3). `lab_manager` holds the *what
+with*: `scripts/` (the actual executable logic — `git_health.py`, `journal_stats.py`,
+`secret_scan.py`, `update_journal_index.py`), `reports/` (the accumulating data), and
+`docs/design-notes/` (this design history). Each skill locates `lab_manager` dynamically as a
+sibling directory of wherever `curriculum-agents` is checked out — no hardcoded absolute path,
+so this survives the still-pending `D:\dev` rename (§3) without needing yet another one-line fix
+added to that checklist.
+
+This mirrors the ecosystem's own established model exactly: "an agent performs a task by drawing
+on skills (reusable methodology) and tools (grounded data access)" (`curriculum-agents/README.md`)
+— `ccslab-manager` is that agent, the six `ccslab-*` skills are the methodology, and
+`lab_manager`'s scripts/reports are the grounded data access, playing the role `tools/` (usually
+an MCP server) plays for the curriculum-research agents. No MCP server was built for this — the
+skills shell out to real local scripts directly, which is enough for now and avoids standing up
+infrastructure this doesn't yet need. A `lab-manager-mcp` tool exposing `reports/` data
+programmatically (so, say, GWDG Chat AI could query lab health directly) is a plausible future
+step if the interactive GWDG track (§6) ever needs it — not started, not currently justified.
+
+## 14. Sources
 
 - `check_repos.py` (repo root, `D:\dev\openevo-ccs-lab\check_repos.py`)
 - `D:\ccs_lab\lab_workflow.py` (legacy prototype, local clone only, not in either GitHub org)
@@ -513,7 +545,7 @@ organic "write one when a session feels worth recording" cadence actually holds 
 - `~/.claude/agents`, `~/.claude/skills` (symlinks), `~/.claude.json` (project registry) — local
   machine state checked for §3
 
-## 14. Revision history
+## 15. Revision history
 
 | Date | Change |
 |---|---|
@@ -522,3 +554,4 @@ organic "write one when a session feels worth recording" cadence actually holds 
 | 2026-07-22 | Phase 2: `scripts/git_health.py` built, tested against the live 16-repo ecosystem, one real bug found and fixed (org-attribution regex broke on dotted repo names like `w3id.org`). Phase 3: dashboard (`app/`) built, GitHub Pages workflow added, verified rendering correctly in both light and dark mode via a local Playwright check (§4's Tier 1 generation model corrected based on what Phase 2 actually required — see the note inserted above). |
 | 2026-07-22 | **Correction**: the "two GitHub orgs" premise (§1) was wrong. Verified via `git ls-remote` that all 6 "legacy-org" repos already live under `openevo-ccs` (identical HEAD SHA at both URLs) — only their local `origin` remotes were stale. Fixed with `git remote set-url` for all 6, added a standing `wrong_org` invariant check to `git_health.py`, replaced the dashboard's "Repos by GitHub org" chart with a "Remote hygiene" panel, dropped the now-pointless org filter, removed the unused `charts.js` module. Open Decision 6 closed as moot; new Open Decision 7 (in-repo stale-reference cleanup across 6 repos) recorded, not resolved. |
 | 2026-07-22 | Added §12 Lab Journal: `scripts/journal_stats.py` (objective grounding), `scripts/update_journal_index.py`, `reports/journal/`, and `renderJournal()` in the dashboard. First real entry written and published the same day. |
+| 2026-07-23 | Added §13: `/ccslab.*` commands live in `curriculum-agents` (one `ccslab-manager` agent, six `ccslab-*` skills — health, clean, gwdg, vision, journal, morning), not as a project-scoped mechanism here — corrected mid-build, per Dustin. `lab_manager` stays the scripts/reports/docs substrate they operate on. Added `scripts/secret_scan.py`, formalizing the credential-filename check `ccslab-clean` now calls. |

@@ -12,6 +12,12 @@ See also
 [`docs/design-notes/ecosystem-cleanliness-and-maintenance-plan.md`](docs/design-notes/ecosystem-cleanliness-and-maintenance-plan.md)
 for the daily-maintenance/remediation system (proposed, not yet built beyond today's manual pass).
 
+**Explicit commands** (`/ccslab-health`, `/ccslab-clean`, `/ccslab-gwdg`, `/ccslab-vision`,
+`/ccslab-journal`, `/ccslab-morning`, or delegate to the `ccslab-manager` agent) live in
+[`curriculum-agents`](https://github.com/openevo-ccs/curriculum-agents) — `agents/ccslab-manager.md`
+and `skills/ccslab-*/` — not here. This repo is the substrate they operate on: the scripts, the
+accumulating reports, and this design history. See design doc §13 for why.
+
 ## Structure
 
 - `docs/design-notes/` — planning docs (this repo's own design discipline, matching `conceptbase`)
@@ -19,6 +25,7 @@ for the daily-maintenance/remediation system (proposed, not yet built beyond tod
   `reports/daily/<date>.json` + an `index.json` manifest, and flags any repo whose remote
   doesn't resolve to the one canonical org (`github.com/openevo-ccs`). Run it with `python
   scripts/git_health.py`; stdlib only, no dependencies.
+- `scripts/secret_scan.py` — sweeps every repo's tracked files for credential-shaped filenames.
 - `scripts/journal_stats.py` — computes objective commit stats (all branches, since the last
   entry) to ground a Lab Journal entry before writing one. `scripts/update_journal_index.py`
   refreshes the manifest after adding one. See the design doc §12.
