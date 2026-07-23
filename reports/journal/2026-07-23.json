@@ -1,0 +1,15 @@
+{
+  "date": "2026-07-23",
+  "period_start": "2026-07-23",
+  "period_end": "2026-07-23",
+  "entry": "Today's work turned on one underappreciated point: computational tools can only help us design curriculum together if we trust what they actually show us, and today produced two vivid demonstrations of how easily that trust breaks silently. In our ongoing study of how concepts like behavior, evolution, and being human are treated across German states' curricula, we discovered that our topic-modeling pipeline had been quietly stripping every umlaut and special character from its topic labels since its very first run — \"Gefühle\" rendering as \"Gefhle\" — because the underlying library defaults to English-only text processing unless told otherwise. Nothing crashed; the corruption was only visible once we checked the actual characters, not just how they looked on screen. That same day, in the curriculum-agents ecosystem, we built and tested a tool that calls a German national research-computing center's AI service to draft candidate curriculum content — assessment items, knowledge-graph relations — strictly for human review, never automatically adopted. Both threads share the same discipline: these tools extend human judgment, they don't replace it, and they're only useful if we stay skeptical of what they hand back rather than trusting it by default. That skepticism is exactly what lets a growing, FAIR, machine-readable curriculum data ecosystem support us in modeling, exploring, and ultimately designing together more meaningful, flexible learning trajectories for the full diversity of learners.",
+  "total_commits": 29,
+  "repos_touched": [
+    "ccs-graph", "conceptbase", "curriculum-agents",
+    "curriculum-evolution", "eva_buch", "lab_manager",
+    "oe-interdisciplinary-k12", "oe-interdisciplinary-k12-gwdg-demo",
+    "openevo-graph"
+  ],
+  "generated_by": "Claude, in conversation with the lab",
+  "grounded_in": "scripts/journal_stats.py output, this session's conversation"
+}
